@@ -37,8 +37,8 @@ class DataBase:
         bool_argument(argp, 'packed', False)
         bool_argument(argp, 'test', test)
         # pre-processing parameters
-        argp.add_argument('--processes', type=int, default=2)
-        argp.add_argument('--threads', type=int, default=2)
+        argp.add_argument('--processes', type=int, default=4)
+        argp.add_argument('--threads', type=int, default=1)
         argp.add_argument('--prefetch', type=int, default=64)
         argp.add_argument('--buffer-size', type=int, default=256)
         bool_argument(argp, 'shuffle', True)
