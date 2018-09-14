@@ -36,6 +36,7 @@ batch-size: 1
 
 ## 05
 
-same as ## 03
+same as ## 02
 fixed Variable EMA update
 
+batch-size: 2

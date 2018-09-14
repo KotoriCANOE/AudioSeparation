@@ -218,7 +218,7 @@ class Generator(GeneratorConfig):
 
     def apply_ema(self, update_ops=[]):
         if not self.var_ema:
-            return
+            return update_ops
         with tf.variable_scope('EMA'):
             with tf.control_dependencies(update_ops):
                 update_ops = [self.ema.apply(self.tvars)]
