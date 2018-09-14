@@ -38,8 +38,10 @@ class Generator(GeneratorConfig):
         initializer = tf.initializers.variance_scaling(
             1.0, 'fan_in', 'normal', self.random_seed, self.dtype)
         skip = last
+        # pre-activation
         if normalizer: last = normalizer(last)
         if activation: last = activation(last)
+        # convolution
         last = slim.conv2d(last, channels, kernel, stride, 'SAME', format,
             dilate, activation, normalizer, None, initializer, regularizer, biases,
             variables_collections=collections)
@@ -57,6 +59,7 @@ class Generator(GeneratorConfig):
         initializer = tf.initializers.variance_scaling(
             1.0, 'fan_in', 'normal', self.random_seed, self.dtype)
         # pre-activation
+        # if normalizer: last = normalizer(last)
         if activation: last = activation(last)
         # convolution
         last = slim.conv2d(last, channels, kernel, stride, 'SAME', format,
@@ -80,6 +83,7 @@ class Generator(GeneratorConfig):
         # shape = last.shape.as_list()
         # in_channels = shape[-3 if format == 'NCHW' else -1]
         # pre-activation
+        # if normalizer: last = normalizer(last)
         if activation: last = activation(last)
         # upsample
         with tf.variable_scope('Upsample'):
@@ -207,14 +211,16 @@ class Generator(GeneratorConfig):
         self.rvars = self.svars.copy()
         # restore moving average of trainable variables
         if self.var_ema > 0:
-            self.rvars = {**{self.ema.average_name(var): var for var in self.tvars},
-                **{var.op.name: var for var in self.mvars}}
+            with tf.variable_scope('EMA'):
+                self.rvars = {**{self.ema.average_name(var): var for var in self.tvars},
+                    **{var.op.name: var for var in self.mvars}}
         return last
 
     def apply_ema(self, update_ops=[]):
         if not self.var_ema:
             return
-        with tf.variable_scope(self.name + 'EMA'):
+        with tf.variable_scope('EMA'):
             with tf.control_dependencies(update_ops):
                 update_ops = [self.ema.apply(self.tvars)]
             self.svars = [self.ema.average(var) for var in self.tvars] + self.mvars
+        return update_ops

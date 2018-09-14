@@ -4,7 +4,7 @@ import os
 import librosa
 from utils import bool_argument, eprint, reset_random, create_session, listdir_files
 from data import DataSong as Data
-from model import SpeakerTransfer
+from model import Model
 
 # class for training session
 class Train:
@@ -62,7 +62,7 @@ class Train:
 
     def build_graph(self):
         with tf.device(self.device):
-            self.model = SpeakerTransfer(self.config)
+            self.model = Model(self.config)
             self.model.build_train()
             self.global_step = tf.train.get_or_create_global_step()
             self.g_train_op = self.model.train(self.global_step)

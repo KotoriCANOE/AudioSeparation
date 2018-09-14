@@ -3,7 +3,7 @@ from network import Generator
 
 DATA_FORMAT = 'NCHW'
 
-class SpeakerTransfer:
+class Model:
     def __init__(self, config):
         # format parameters
         self.dtype = tf.float32
@@ -92,7 +92,7 @@ class SpeakerTransfer:
             self.train_sums.append(tf.summary.histogram(var.op.name + '/grad', grad))
             self.train_sums.append(tf.summary.histogram(var.op.name, var))
         # save moving average of trainalbe variables
-        model.apply_ema(update_ops)
+        update_ops = model.apply_ema(update_ops)
         # all the saver variables
         self.svars = self.generator.svars
         # return optimizing op
