@@ -72,7 +72,7 @@ class Generator(GeneratorConfig):
                     activation=activation, normalizer=normalizer,
                     regularizer=regularizer, collections=collections)
         # squeeze and excitation
-        last = layers.SEUnit(last, channels, format, collections)
+        # last = layers.SEUnit(last, channels, format, collections)
         return last
 
     def DBlock(self, last, channels, resblocks=1,
@@ -106,12 +106,12 @@ class Generator(GeneratorConfig):
                     activation=activation, normalizer=normalizer,
                     regularizer=regularizer, collections=collections)
         # squeeze and excitation
-        last = layers.SEUnit(last, channels, format, collections)
+        # last = layers.SEUnit(last, channels, format, collections)
         return last
 
     def __call__(self, last, reuse=None):
         format = self.data_format
-        kernel1 = [1, 4]
+        kernel1 = [1, 8]
         stride1 = [1, 2]
         kernel2 = [1, 3]
         stride2 = [1, 2]
@@ -122,6 +122,9 @@ class Generator(GeneratorConfig):
                 is_training=self.training, data_format=format, renorm=False)
         elif self.normalization == 'Instance':
             normalizer = lambda x: slim.instance_norm(x, center=True, scale=True, data_format=format)
+        elif self.normalization == 'Group':
+            normalizer = lambda x: (slim.group_norm(x, x.shape.as_list()[-3] // 16, -3, (-2, -1))
+                if format == 'NCHW' else slim.group_norm(x, x.shape.as_list()[-1] // 16, -1, (-3, -2)))
         else:
             normalizer = None
         regularizer = slim.l2_regularizer(self.weight_decay) if self.weight_decay else None

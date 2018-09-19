@@ -24,6 +24,7 @@ batch-size: 1
 
 ## 03
 
+(unchanged)
 added SEUnit to EBlock and DBlock
 
 batch-size: 2
@@ -40,3 +41,40 @@ same as ## 02
 fixed Variable EMA update
 
 batch-size: 2
+
+## 06
+
+(unchanged)
+same as ## 02
+no SEUnit
+added normalizer
+
+batch-size: 2
+
+## 07
+
+kernel1 = [1, 4] => [1, 8]
+
+## 08
+
+kernel2 = [1, 3] => [1, 5]
+SGDR - m_mul: 1.0 => 0.85
+
+## 09
+
+kernel2 = [1, 7]
+
+## 10
+
+kernel2 = [1, 3]
+
+## 11
+
+(unchanged)
+added normalizer to EBlock and DBlock
+
+## 12
+
+(unchanged)
+InBlock: [1, 8] => [1, 16]
+
