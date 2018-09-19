@@ -78,3 +78,13 @@ added normalizer to EBlock and DBlock
 (unchanged)
 InBlock: [1, 8] => [1, 16]
 
+## 13
+
+added EBlock without down/up-sampling at the beginning/ending
+channels: 16, 32, 48, 64, 96, 128, 160, 192, 224, 256
+ResBlocks: 0, 0, 0, 1, 1, 2, 2, 2, 3, 3 | 3, 2, 2, 2, 1, 1, 0, 0, 0, 0
+
+## 14
+
+use residual connection
+

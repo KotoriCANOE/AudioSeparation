@@ -59,7 +59,6 @@ class Generator(GeneratorConfig):
         initializer = tf.initializers.variance_scaling(
             1.0, 'fan_in', 'normal', self.random_seed, self.dtype)
         # pre-activation
-        # if normalizer: last = normalizer(last)
         if activation: last = activation(last)
         # convolution
         last = slim.conv2d(last, channels, kernel, stride, 'SAME', format,
@@ -83,7 +82,6 @@ class Generator(GeneratorConfig):
         # shape = last.shape.as_list()
         # in_channels = shape[-3 if format == 'NCHW' else -1]
         # pre-activation
-        # if normalizer: last = normalizer(last)
         if activation: last = activation(last)
         # upsample
         with tf.variable_scope('Upsample'):
@@ -128,6 +126,8 @@ class Generator(GeneratorConfig):
         else:
             normalizer = None
         regularizer = slim.l2_regularizer(self.weight_decay) if self.weight_decay else None
+        skip_connection = lambda x, y: x + y
+        # skip_connection = lambda x, y: tf.concat([x, y], -3 if format == 'NCHW' else -1)
         # model scope
         with tf.variable_scope(self.name, reuse=reuse):
             # states
@@ -136,8 +136,12 @@ class Generator(GeneratorConfig):
             skips = []
             # encoder
             with tf.variable_scope('InBlock'):
-                last = self.EBlock(last, 32, 0, [1, 8], [1, 2],
+                last = self.EBlock(last, 16, 0, [1, 8], [1, 1],
                     format, None, None, regularizer)
+            with tf.variable_scope('EBlock_0'):
+                skips.append(last)
+                last = self.EBlock(last, 32, 0, kernel1, stride1,
+                    format, activation, normalizer, regularizer)
             with tf.variable_scope('EBlock_1'):
                 skips.append(last)
                 last = self.EBlock(last, 48, 0, kernel1, stride1,
@@ -174,37 +178,41 @@ class Generator(GeneratorConfig):
             with tf.variable_scope('DBlock_8'):
                 last = self.DBlock(last, 224, 3, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('DBlock_7'):
                 last = self.DBlock(last, 192, 2, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('DBlock_6'):
                 last = self.DBlock(last, 160, 2, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('DBlock_5'):
                 last = self.DBlock(last, 128, 2, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('DBlock_4'):
                 last = self.DBlock(last, 96, 1, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('DBlock_3'):
                 last = self.DBlock(last, 64, 1, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('DBlock_2'):
                 last = self.DBlock(last, 48, 0, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('DBlock_1'):
                 last = self.DBlock(last, 32, 0, kernel2, stride2,
                     format, activation, normalizer, regularizer)
-                last = tf.concat([last, skips.pop()], -3)
+                last = skip_connection(last, skips.pop())
+            with tf.variable_scope('DBlock_0'):
+                last = self.DBlock(last, 16, 0, kernel2, stride2,
+                    format, activation, normalizer, regularizer)
+                last = skip_connection(last, skips.pop())
             with tf.variable_scope('OutBlock'):
-                last = self.DBlock(last, self.in_channels, 0, kernel2, stride2,
+                last = self.EBlock(last, self.in_channels, 0, [1, 8], [1, 1],
                     format, activation, normalizer, regularizer)
         # trainable/model/save/restore variables
         self.tvars = tf.trainable_variables(self.name)

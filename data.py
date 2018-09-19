@@ -57,7 +57,7 @@ class DataBase:
                 args.__setattr__(name, value)
         def argchoose(name, cond, tv, fv):
             argdefault(name, tv if cond else fv)
-        argchoose('batch_size', args.test, 1, 1)
+        argchoose('batch_size', args.test, 1, 2)
         argchoose('pp_duration', args.test, 8.0, 8.0)
         argchoose('pp_smooth', args.test, 0, 0)
         argchoose('pp_noise', args.test, 0, 0)
