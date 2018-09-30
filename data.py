@@ -139,8 +139,8 @@ class DataBase:
         # label_data *= norm_factor
         # wrap padding
         if samples < slice_samples:
-            input_data = np.pad(input_data, (0, slice_samples - samples), 'wrap')
-            label_data = np.pad(label_data, (0, slice_samples - samples), 'wrap')
+            input_data = np.pad(input_data, ((0, 0), (0, slice_samples - samples)), 'wrap')
+            label_data = np.pad(label_data, ((0, 0), (0, slice_samples - samples)), 'wrap')
         # random data manipulation
         # input_data = DataPP.process(input_data, config)
         # label_data = DataPP.process(label_data, config)

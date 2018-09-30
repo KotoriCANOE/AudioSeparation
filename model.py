@@ -62,7 +62,7 @@ class Model:
             # total loss
             losses = tf.losses.get_losses(loss_key)
             main_loss = tf.add_n(losses, 'main_loss')
-            # regularization loss
+            # regularization loss - weight
             reg_losses = tf.losses.get_regularization_losses('Generator')
             reg_loss = tf.add_n(reg_losses)
             update_ops.append(self.loss_summary('reg_loss', reg_loss))
