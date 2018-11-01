@@ -59,8 +59,8 @@ class Model:
         loss_key = 'GeneratorLoss'
         with tf.variable_scope(loss_key):
             # L1 loss
-            # l1_loss = tf.losses.absolute_difference(labels, outputs)
-            # update_ops.append(self.loss_summary('l1_loss', l1_loss, self.g_log_losses))
+            l1_loss = tf.losses.absolute_difference(labels, outputs)
+            update_ops.append(self.loss_summary('l1_loss', l1_loss, self.g_log_losses))
             # MS-SSIM loss
             ssim_loss = tf.constant(0, tf.float32)
             for label, output in zip(tf.split(labels, 2, axis=-3), tf.split(outputs, 2, axis=-3)):

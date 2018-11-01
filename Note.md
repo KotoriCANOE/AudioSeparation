@@ -91,3 +91,8 @@ use residual connection
 ## 15
 
 loss: MS-SSIM
+
+## 16
+
+loss: L1 + MS-SSIM
+
