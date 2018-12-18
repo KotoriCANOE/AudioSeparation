@@ -48,7 +48,7 @@ class Generator(GeneratorConfig):
         last = slim.conv2d(last, channels, kernel, stride, 'SAME', format,
             dilate, None, None, None, initializer, regularizer, biases,
             variables_collections=collections)
-        # skip connection
+        # residual connection
         last = layers.SEUnit(last, channels, format, collections)
         last += skip
         return last
