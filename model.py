@@ -62,13 +62,13 @@ class Model:
             l1_loss = tf.losses.absolute_difference(labels, outputs)
             update_ops.append(self.loss_summary('l1_loss', l1_loss, self.g_log_losses))
             # MS-SSIM loss
-            ssim_loss = tf.constant(0, tf.float32)
-            for label, output in zip(tf.split(labels, self.in_channels, axis=-3),
-                tf.split(outputs, self.in_channels, axis=-3)):
-                ssim_loss += 1 - layers.MS_SSIM(label + 1, output + 1, L=2,
-                    radius=10, sigma=4.0, data_format=self.data_format, one_dim=True)
-            tf.losses.add_loss(ssim_loss)
-            update_ops.append(self.loss_summary('ssim_loss', ssim_loss, self.g_log_losses))
+            # ssim_loss = tf.constant(0, tf.float32)
+            # for label, output in zip(tf.split(labels, self.in_channels, axis=-3),
+            #     tf.split(outputs, self.in_channels, axis=-3)):
+            #     ssim_loss += 1 - layers.MS_SSIM(label + 1, output + 1, L=2,
+            #         radius=10, sigma=4.0, data_format=self.data_format, one_dim=True)
+            # tf.losses.add_loss(ssim_loss * 0.1)
+            # update_ops.append(self.loss_summary('ssim_loss', ssim_loss, self.g_log_losses))
             # total loss
             losses = tf.losses.get_losses(loss_key)
             main_loss = tf.add_n(losses, 'main_loss')

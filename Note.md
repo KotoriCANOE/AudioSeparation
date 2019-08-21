@@ -96,3 +96,8 @@ loss: MS-SSIM
 
 loss: L1 + MS-SSIM
 
+## 20
+
+steps: 127000
+dataset: expanded to 16 songs
+loss: L1

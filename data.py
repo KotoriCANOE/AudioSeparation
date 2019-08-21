@@ -119,7 +119,8 @@ class DataBase:
         sample_rate = config.pp_rate if config.pp_rate > 0 else None
         slice_duration = np.abs(config.pp_duration)
         # slice
-        duration = librosa.get_duration(filename=input_file)
+        duration = min(librosa.get_duration(filename=input_file),
+            librosa.get_duration(filename=label_file)) # take the minimum length of both files, in case they differ
         if config.pp_duration > 0 and duration > slice_duration:
             # randomly cropping
             offset = random.uniform(0, duration - slice_duration)
@@ -328,6 +329,7 @@ class DataSong(DataBase):
         data_list = listdir_files(self.dataset, filter_ext=filter_ext)
         # filter files by length
         data_list = self.filter_files(data_list, 2.0, None)
+        data_list.sort()
         # list of pairs
         regex = re.compile(r'伴奏|instru|vocal')
         bgm_list = [f for f in data_list if re.findall(regex, f)]
