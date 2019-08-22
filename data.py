@@ -61,7 +61,7 @@ class DataBase:
         argchoose('pp_duration', args.test, 8.0, 8.0)
         argchoose('pp_smooth', args.test, 0, 0)
         argchoose('pp_noise', args.test, 0, 0)
-        argchoose('pp_amplitude', args.test, 0, 0)
+        argchoose('pp_amplitude', args.test, 0, 20)
 
     def get_files_packed(self):
         data_list = os.listdir(self.dataset)
@@ -131,13 +131,16 @@ class DataBase:
             offset=offset, duration=slice_duration)
         label_data, rate = librosa.load(label_file, sr=sample_rate, mono=False,
             offset=offset, duration=slice_duration)
-        # audio_max = np.maximum(np.max(input_data), np.max(label_data))
+        audio_max = np.maximum(np.max(input_data), np.max(label_data))
         samples = input_data.shape[-1]
         slice_samples = int(slice_duration * rate + 0.5)
         # normalization
-        # norm_factor = 1 / audio_max
-        # input_data *= norm_factor
-        # label_data *= norm_factor
+        amplitude = 1.0
+        if config.pp_amplitude > 0: # random amplitude
+            amplitude = 0.1 ** np.random.uniform(0, config.pp_amplitude / 10.0) # 0~-20 dB
+        norm_factor = amplitude / audio_max
+        input_data *= norm_factor
+        label_data *= norm_factor
         # wrap padding
         if samples < slice_samples:
             input_data = np.pad(input_data, ((0, 0), (0, slice_samples - samples)), 'wrap')

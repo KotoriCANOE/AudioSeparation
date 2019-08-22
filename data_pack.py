@@ -41,7 +41,7 @@ class DataPack:
             inputs, labels = next(data_gen)
             # save to output file
             with open(ofile, 'wb') as fd:
-                np.savez_compressed(fd, inputs=inputs, labels=labels)
+                np.savez(fd, inputs=inputs, labels=labels)
             # logging
             if step % self.log_frequency == 0:
                 time_current = time.time()

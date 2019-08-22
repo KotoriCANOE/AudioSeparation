@@ -1,6 +1,8 @@
 chcp 65001
 cd /d "%~dp0"
 
-python AudioSeparation.py model7.tmp/model.pb -i "D:\CloudMusic\泠鸢yousa" -o "result"
+SET "DIR=F:\Datasets\Songs\Test"
+SET POSTFIX=20
+python AudioSeparation.py model%POSTFIX%.tmp/model.pb -i "%DIR%" -o "%DIR%\..\TestResult\%POSTFIX%"
 
 pause
