@@ -101,3 +101,12 @@ loss: L1 + MS-SSIM
 steps: 127000
 dataset: expanded to 16 songs
 loss: L1
+batch size: 2
+
+## 21
+
+steps: 127000
+packed data
+dataset: added random amplitude
+batch size: 4
+
